@@ -23,7 +23,7 @@ class Session:
     def start(cls, response: Response, session_id: Optional[str] = Cookie(None)):
         session_id = session_id or uuid4().hex
         session = cls(session_id)
-        response.set_cookie("session_id", session_id, httponly=True, samesite="None", secure=True)
+        response.set_cookie("session_id", session_id, httponly=True, samesite="lax")
         return session
 
     def __init__(self, session_id):
