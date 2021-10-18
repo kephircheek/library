@@ -3,7 +3,7 @@ from uuid import uuid4, UUID
 import pickle
 
 from pydantic import BaseModel
-from fastapi import APIRouter, Depends, Response, Cookie, HTTPException, status
+from fastapi import APIRouter, Depends, Response, Cookie, Header, HTTPException, status
 
 # from .project.model import Project
 from .common import redis, Role
@@ -16,8 +16,8 @@ class Session:
     REDIS_KEY_PREFIX = "session:"
 
     @classmethod
-    def load(cls, session_id: Optional[str] = Cookie(None)):
-        return cls(session_id) if session_id else None
+    def load(cls, session_id: Optional[str] = Cookie(None), x_session_id: Optional[str] = Header(None)):
+        return cls(session_id) if session_id else (cls(x_session_id) if x_session_id else None)
 
     @classmethod
     def start(cls, response: Response, session_id: Optional[str] = Cookie(None)):
