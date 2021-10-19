@@ -20,14 +20,17 @@ class Session:
         return cls(session_id) if session_id else (cls(x_session_id) if x_session_id else None)
 
     @classmethod
-    def start(cls, response: Response, session_id: Optional[str] = Cookie(None)):
-        session_id = session_id or uuid4().hex
-        session = cls(session_id)
-        response.set_cookie("session_id", session_id, httponly=True, samesite="lax")
+    def start(cls, response: Response, session_id: Optional[str] = Cookie(None), x_session_id: Optional[str] = Header(None)):
+        session = cls(session_id) if session_id else (cls(x_session_id) if x_session_id else uuid4().hex)
+        response.set_cookie("session_id", session.hex, httponly=True, samesite="lax")
         return session
 
     def __init__(self, session_id):
         self._id = UUID(session_id)
+
+    @property
+    def hex(self):
+        return self._id.hex
 
     def __repr__(self):
         return f"{self.__class__.__name__}({repr(self._id)})"
