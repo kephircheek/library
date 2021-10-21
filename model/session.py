@@ -21,7 +21,7 @@ class Session:
 
     @classmethod
     def start(cls, response: Response, session_id: Optional[str] = Cookie(None), x_session_id: Optional[str] = Header(None)):
-        session = cls(session_id) if session_id else (cls(x_session_id) if x_session_id else uuid4().hex)
+        session = cls(session_id) if session_id else (cls(x_session_id) if x_session_id else cls(uuid4().hex))
         response.set_cookie("session_id", session.hex, httponly=True, samesite="lax")
         return session
 
