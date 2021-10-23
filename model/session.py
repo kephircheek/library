@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Union
 from uuid import uuid4, UUID
 import pickle
 
@@ -16,17 +16,11 @@ class Session:
     REDIS_KEY_PREFIX = "session:"
 
     @classmethod
-    def load(cls, session_id: Optional[str] = Cookie(None), x_session_id: Optional[str] = Header(None)):
-        return cls(session_id) if session_id else (cls(x_session_id) if x_session_id else None)
+    def load(cls, x_session_id: Optional[UUID] = Header(None)):
+        return cls(x_session_id) if x_session_id else None
 
-    @classmethod
-    def start(cls, response: Response, session_id: Optional[str] = Cookie(None), x_session_id: Optional[str] = Header(None)):
-        session = cls(session_id) if session_id else (cls(x_session_id) if x_session_id else cls(uuid4().hex))
-        response.set_cookie("session_id", session.hex, httponly=True, samesite="lax")
-        return session
-
-    def __init__(self, session_id):
-        self._id = UUID(session_id)
+    def __init__(self, session_id: Union[UUID, str]):
+        self._id = session_id if isinstance(session_id, UUID) else UUID(session_id)
 
     @property
     def hex(self):

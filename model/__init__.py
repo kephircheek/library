@@ -18,7 +18,9 @@ app.add_middleware(
     allow_credentials=True,
     allow_origins=os.environ["ALLOW_ORIGINS"].split(";"),
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=[
+        "x-session-id",
+    ],
 )
 
 app.include_router(project.router, prefix='/project')

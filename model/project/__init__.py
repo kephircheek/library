@@ -14,7 +14,7 @@ router = APIRouter()
 
 
 @router.post("/", response_model=NewProjectOut)
-async def append(project: ProjectIn, session: Session = Depends(Session.start)):
+async def append(project: ProjectIn, session: Session = Depends(Session.load)):
     """Return ID of new wishlist."""
     data = await Project.insert(project.dict(exclude_unset=True))
     await session.set_project_role(data['id'], Role.OWNER)

@@ -43,9 +43,8 @@ async def delete(id: UUID):
     return await Item.delete(id)
 
 
-
 @router.get("/{id}/release")
-async def release(id: UUID, session: Session = Depends(Session.start)):
+async def release(id: UUID, session: Session = Depends(Session.load)):
     await Item.update(id, {'relevance': False})
     secret = await Item.get_secret(id)
     await session.append_release({"id": id, "secret": str(secret)})
